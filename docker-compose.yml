@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:16-alpine
+    container_name: crud-db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: cruddb
+    volumes:
+      # Persist dữ liệu ngay cả khi container bị xóa
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      # Kiểm tra database sẵn sàng mỗi 5s
+      test: ["CMD-SHELL", "pg_isready -U admin -d cruddb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # .NET 8 API Server
+  api:
+    build: ./API
+    container_name: crud-api
+    depends_on:
+      # Chờ db sẵn sàng hoàn toàn trước khi start API
+      db:
+        condition: service_healthy
+    environment:
+      # Override connection string từ appsettings.json
+      # Double underscore (__) là cú pháp .NET để override nested config
+      ConnectionStrings__DefaultConnection: "Host=db;Port5432;Database=cruddb;Username=admin;Password=password"
+    ports:
+      - "8080:8080"
+    # Tùy chọn: điều chỉnh nếu API không start được
+    # restart: on-failure
+
+  # React + Nginx Client
+  client:
+    build: ./client
+    container_name: crud-client
+    depends_on:
+      - api
+    ports:
+      - "80:80"
+    # Nginx sẽ proxy /api/* đến API service
+
+volumes:
+  # Volume được định nghĩa để store PostgreSQL data
+  postgres-data:
