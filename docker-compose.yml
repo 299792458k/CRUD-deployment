@@ -13,7 +13,7 @@ services:
       # Persist dữ liệu ngay cả khi container bị xóa
       - postgres-data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5413:5432"
     healthcheck:
       # Kiểm tra database sẵn sàng mỗi 5s
       test: ["CMD-SHELL", "pg_isready -U admin -d cruddb"]
@@ -32,7 +32,7 @@ services:
     environment:
       # Override connection string từ appsettings.json
       # Double underscore (__) là cú pháp .NET để override nested config
-      ConnectionStrings__DefaultConnection: "Host=db;Port5432;Database=cruddb;Username=admin;Password=password"
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=cruddb;Username=admin;Password=password"
     ports:
       - "8080:8080"
     # Tùy chọn: điều chỉnh nếu API không start được
