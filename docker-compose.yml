@@ -6,9 +6,9 @@ services:
     image: postgres:16-alpine
     container_name: crud-db
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: cruddb
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       # Persist dữ liệu ngay cả khi container bị xóa
       - postgres-data:/var/lib/postgresql/data
@@ -32,7 +32,7 @@ services:
     environment:
       # Override connection string từ appsettings.json
       # Double underscore (__) là cú pháp .NET để override nested config
-      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=cruddb;Username=admin;Password=password"
+      ConnectionStrings__DefaultConnection: ${DB_CONNECTION}
     ports:
       - "8080:8080"
     # Tùy chọn: điều chỉnh nếu API không start được
