@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: default
+  labels:
+    app: api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - name: api
+        # Image từ Minikube Docker daemon
+        image: fullstack-crud-react-net8-api:latest
+        # Never = K8s không pull từ registry, dùng local Minikube image
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+          name: http
+        # Inject env vars từ Secret + ConfigMap
+        envFrom:
+        - secretRef:
+            name: app-secret
+        - configMapRef:
+            name: app-config
+        # Health check — tắm tạm để debug
+        # livenessProbe:
+        #   httpGet:
+        #     path: /swagger
+        #     port: 8080
+        #   initialDelaySeconds: 30
+        #   periodSeconds: 10
+        # readinessProbe:
+        #   httpGet:
+        #     path: /swagger
+        #     port: 8080
+        #   initialDelaySeconds: 10
+        #   periodSeconds: 5
