@@ -6,16 +6,13 @@ metadata:
   labels:
     app: client
 spec:
-  # NodePort = expose ra ngoài K8s cluster (qua Minikube IP)
-  type: NodePort
+  # ClusterIP = expose chỉ nội bộ (Ingress sẽ proxy)
+  type: ClusterIP
   selector:
     # Route traffic đến Pods có label app: client
     app: client
   ports:
   - port: 80
-    targetPort: 80
-    # nodePort: K8s sẽ auto-assign 30000-32767 nếu không set
-    # Hoặc bạn có thể set cụ thể:
-    nodePort: 30080
+    targetPort: 80  # Vite dev server chạy port 4200
     protocol: TCP
     name: http
