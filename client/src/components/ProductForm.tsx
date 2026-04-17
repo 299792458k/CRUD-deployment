@@ -68,7 +68,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader shadow={"sm"}>Add Product</ModalHeader>
+          <ModalHeader shadow={"sm"}>Add Product Test CI/CD</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <VStack
