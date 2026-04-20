@@ -35,8 +35,8 @@ pipeline {
         script {
           withKubeConfig([credentialsId: 'bcf55376-bfc4-41e6-ac62-df158a17dd5d']) {
             sh '''
-              kubectl set image deployment/api api=${API_IMAGE}:${BUILD_NUMBER} --record
-              kubectl set image deployment/client client=${CLIENT_IMAGE}:${BUILD_NUMBER} --record
+              kubectl set image deployment/api api=${API_IMAGE}:${BUILD_NUMBER} --insecure-skip-tls-verify
+              kubectl set image deployment/client client=${CLIENT_IMAGE}:${BUILD_NUMBER} --insecure-skip-tls-verify
             '''
           }
         }
@@ -49,10 +49,10 @@ pipeline {
           withKubeConfig([credentialsId: 'bcf55376-bfc4-41e6-ac62-df158a17dd5d']) {
             sh '''
               echo "Waiting for API deployment..."
-              kubectl rollout status deployment/api --timeout=5m
+              kubectl rollout status deployment/api --timeout=5m --insecure-skip-tls-verify
 
               echo "Waiting for Client deployment..."
-              kubectl rollout status deployment/client --timeout=5m
+              kubectl rollout status deployment/client --timeout=5m --insecure-skip-tls-verify
             '''
           }
         }
