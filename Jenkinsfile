@@ -30,6 +30,16 @@ pipeline {
       }
     }
 
+    stage('Push to Minikube') {
+        steps {
+          script {
+            // Lệnh này ép Minikube nạp image từ Docker host vào trong nó
+            sh 'minikube image load fullstack-crud-react-net8-api:${BUILD_NUMBER}'
+            sh 'minikube image load fullstack-crud-react-net8-client:${BUILD_NUMBER}'
+          }
+        }
+    }
+
     stage('Update K8s Deployments') {
       steps {
         script {

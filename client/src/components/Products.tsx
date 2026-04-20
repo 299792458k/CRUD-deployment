@@ -82,7 +82,7 @@ export const Products: React.FC<ProductsProps> = ({}) => {
           leftIcon={<AddIcon />}
           onClick={onOpen}
         >
-          Add Product
+          Add Product V1
         </Button>
       </Flex>
       <TableContainer>
