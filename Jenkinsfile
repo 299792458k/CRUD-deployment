@@ -5,6 +5,7 @@ pipeline {
     DOCKER_REGISTRY = 'docker.io'
     API_IMAGE = 'fullstack-crud-react-net8-api'
     CLIENT_IMAGE = 'fullstack-crud-react-net8-client'
+    REGISTRY = 'host.docker.internal:5678'
   }
 
   stages {
@@ -17,7 +18,7 @@ pipeline {
     stage('Build API Image') {
       steps {
         script {
-          sh 'docker build -t localhost:5678/${API_IMAGE}:${BUILD_NUMBER} ./API'
+          sh 'docker build -t ${REGISTRY}/${API_IMAGE}:${BUILD_NUMBER} ./API'
         }
       }
     }
@@ -25,7 +26,7 @@ pipeline {
     stage('Build Client Image') {
       steps {
         script {
-          sh 'docker build -t localhost:5678/${CLIENT_IMAGE}:${BUILD_NUMBER} ./client'
+          sh 'docker build -t ${REGISTRY}/${CLIENT_IMAGE}:${BUILD_NUMBER} ./client'
         }
       }
     }
@@ -33,8 +34,8 @@ pipeline {
     stage('Push to Registry') {
         steps {
           script {
-            sh 'docker push localhost:5678/${API_IMAGE}:${BUILD_NUMBER}'
-            sh 'docker push localhost:5678/${CLIENT_IMAGE}:${BUILD_NUMBER}'
+            sh 'docker push ${REGISTRY}/${API_IMAGE}:${BUILD_NUMBER}'
+            sh 'docker push ${REGISTRY}/${CLIENT_IMAGE}:${BUILD_NUMBER}'
           }
         }
     }
