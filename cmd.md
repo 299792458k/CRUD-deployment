@@ -3,13 +3,13 @@ docker build
 docker compose up
 ### K8S operations
 # start minikube
-minikube start | cls
+minikube start | minikube start --driver=docker
 
 minikube status
 # start tunnel (minikube chạy trên VM linux, host window ko thể nhìn thấy dải IP này. => cần mở tunnel của minikube để localhost mở kết nối được đến service/ingress bên trong k8s của minikube)
 minikube tunnel
 # Point docker local sang Minikube daemon
-& minikube -p minikube docker-env --shell powershell | Invoke-Expression
+minikube -p minikube docker-env --shell powershell | Invoke-Expression
 # addons check for ingress
 minikube addons list
 # build images
@@ -27,6 +27,8 @@ kubectl set image deployment/api api=fullstack-crud-react-net8-api:v2
 kubectl rollout status deployment/api
 kubectl rollout undo deployment/api
 kubectl rollout history deployment/api
+# local registry (minikube), using port 5678 to avoid conflict with 5000
+kubectl port-forward --namespace kube-system service/registry 5678:80
 # ngrok public
 ngrok http 8081 (jenkins container running on 8081)
 # Jenkin admin psw

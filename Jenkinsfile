@@ -17,7 +17,7 @@ pipeline {
     stage('Build API Image') {
       steps {
         script {
-          sh 'docker build -t ${API_IMAGE}:${BUILD_NUMBER} -t ${API_IMAGE}:latest ./API'
+          sh 'docker build -t localhost:5678/${API_IMAGE}:${BUILD_NUMBER} ./API'
         }
       }
     }
@@ -25,17 +25,16 @@ pipeline {
     stage('Build Client Image') {
       steps {
         script {
-          sh 'docker build -t ${CLIENT_IMAGE}:${BUILD_NUMBER} -t ${CLIENT_IMAGE}:latest ./client'
+          sh 'docker build -t localhost:5678/${CLIENT_IMAGE}:${BUILD_NUMBER} ./client'
         }
       }
     }
 
-    stage('Push to Minikube') {
+    stage('Push to Registry') {
         steps {
           script {
-            // Lệnh này ép Minikube nạp image từ Docker host vào trong nó
-            sh 'minikube image load fullstack-crud-react-net8-api:${BUILD_NUMBER}'
-            sh 'minikube image load fullstack-crud-react-net8-client:${BUILD_NUMBER}'
+            sh 'docker push localhost:5678/${API_IMAGE}:${BUILD_NUMBER}'
+            sh 'docker push localhost:5678/${CLIENT_IMAGE}:${BUILD_NUMBER}'
           }
         }
     }
@@ -45,8 +44,8 @@ pipeline {
         script {
           withKubeConfig([credentialsId: 'bcf55376-bfc4-41e6-ac62-df158a17dd5d']) {
             sh '''
-              kubectl set image deployment/api api=${API_IMAGE}:${BUILD_NUMBER} --insecure-skip-tls-verify
-              kubectl set image deployment/client client=${CLIENT_IMAGE}:${BUILD_NUMBER} --insecure-skip-tls-verify
+              kubectl set image deployment/api api=registry.kube-system.svc.cluster.local/${API_IMAGE}:${BUILD_NUMBER} --insecure-skip-tls-verify
+              kubectl set image deployment/client client=registry.kube-system.svc.cluster.local/${CLIENT_IMAGE}:${BUILD_NUMBER} --insecure-skip-tls-verify
             '''
           }
         }
